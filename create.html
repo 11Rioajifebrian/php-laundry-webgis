@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+        }
+
+        #map {
+            height: 100vh;
+            width: 100vw;
+        }
+
+        .card {
+            position: absolute;
+            top: 20px;
+            /* Adjust if needed */
+            left: 20px;
+            z-index: 1000;
+            width: 400px;
+            /* Increase the width */
+            padding: 20px;
+            /* Add more padding */
+            bottom: 20px;
+            /* Ensures equal spacing at the bottom */
+        }
+
+        /* Ensuring the card fits well without scrolling */
+        .card-body {
+            max-height: calc(100vh - 60px);
+            /* To fit within the viewport, adjust if needed */
+        }
+
+        /* Description text area */
+        #description {
+            height: 100px;
+            /* Fixed height for the text area */
+            resize: none;
+            /* Prevent resizing */
+        }
+        .navbar {
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+
+        /* Sesuaikan margin pada brand agar terlihat lebih seimbang */
+        .navbar-brand {
+            margin-right: 20px;
+        }
+
+        /* Tambahkan margin antar item navbar */
+        .navbar-nav .nav-item {
+            margin-right: 15px;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Add Laundry Location</h5>
+            <form action="create.php" method="post">
+                <div class="form-group">
+                    <label for="name">Laundry Name</label>
+                    <input type="text" id="name" name="name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <input type="text" id="address" name="address" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" class="form-control" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="latitude">Latitude</label>
+                    <input type="text" id="latitude" name="latitude" class="form-control" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="longitude">Longitude</label>
+                    <input type="text" id="longitude" name="longitude" class="form-control" readonly>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Submit</button>
+            </form>
+            <a href="read.php" class="btn btn-link btn-block">View Locations</a>
+        </div>
+    </div>
+
+    <div id="map"></div>
+
+    <script>
+        var map = L.map('map', {
+            center: [-0.05927462695943814, 109.35214737998321],
+            zoom: 13,
+            zoomControl: false
+        });
+
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+
+        L.control.zoom({
+            position: 'topright'
+        }).addTo(map);
+
+        var marker;
+        var inputLatitude = document.getElementById('latitude');
+        var inputLongitude = document.getElementById('longitude');
+
+        map.on('click', function (e) {
+            if (marker) {
+                map.removeLayer(marker);
+            }
+            marker = L.marker(e.latlng).addTo(map);
+
+            inputLatitude.value = e.latlng.lat;
+            inputLongitude.value = e.latlng.lng;
+        });
+    </script>
+</body>
+
+</html>
